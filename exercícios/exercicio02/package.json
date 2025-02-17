@@ -1,0 +1,17 @@
+{
+  "name": "exercicio02",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch ./src/server.js",
+    "db:sync": "node ./src/database/sync-database.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.3"
+  }
+}
