@@ -11,6 +11,53 @@ router.get('/', async (req, res) => {
   res.json(posts);
 });
 
+// GET /api/posts/search
+router.get('/search', async (req, res) => {
+  const { title, authorId, published, startDate, endDate } = req.query;
+
+  const filter = {};
+
+  // filtragem pelo nome do post
+  if (title) {
+    filter.title = {
+      contains: title,
+      mode: 'insensitive', // Não faz a diferenciação de letra maiúscula e minúscula
+    };
+  }
+
+  // filtragem pelo id do autor
+  if (authorId) {
+    filter.authorId = +authorId;
+  }
+
+  // filtragem pela publicação(se foi publicada ou não)
+  if (published) {
+    filter.published = published === 'true';
+  }
+
+  // filtragem por datas
+  if (startDate || endDate) {
+    filter.created_at = {};
+
+    if (startDate) {
+      filter.created_at.gte = new Date(startDate); // gte é o maior ou igual (<=)
+    }
+    if (endDate) {
+      filter.created_at.lte = new Date(endDate); // lte é o menor ou igual (>=)
+    }
+  }
+
+  console.log(`Filtros: ${filter}`);
+
+  const posts = await prisma.post.findMany({
+    where: filter,
+    orderBy: {
+      created_at: 'desc',
+    },
+  });
+  res.json(posts);
+});
+
 // GET /api/posts
 router.post('/', async (req, res) => {
   const { title, slug, content, published, authorId } = req.body;
