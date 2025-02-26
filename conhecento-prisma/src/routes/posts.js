@@ -5,10 +5,41 @@ const router = Router();
 
 // GET /api/posts
 router.get('/', async (req, res) => {
+  // aqui caso o número da página não seja inserido, por padrão assumirá como página 1
+  const page = +req.query.page || 1;
+  // aqui caso o número de posts por página não for inserido, por padrão retornarão 10 posts por página
+  const pageSize = +req.query.pageSize || 10;
+
+  // aqui é o calculo de quantos posts iremos pular
+  // por exemplo, se estivermos na página 1 não queremos pular/ignorar nenhum dado,
+  // mas se estivermos na página 2, iremos pular, por padrão, 10 posts
+  const skip = (page - 1) * pageSize;
+  // aqui é basicamente a quantidade de posts que queremos pegar, por padrão são 10 posts
+  const take = pageSize;
+
   const posts = await prisma.post.findMany({
-    orderBy: { created_at: 'desc' },
+    where: {
+      published: true,
+    },
+    orderBy: {
+      created_at: 'desc',
+    },
+    take, // take é a quantidade de valores que queremos pegar, neste caso, por padrão 10 posts por página
+    skip, // skip é a quantidade de valores que iremos pular, por exemplo, se estivermos na página 2, todos os valores da página 1 serão pulados/ignorados
   });
-  res.json(posts);
+
+  const totalPosts = await prisma.post.count({ where: { published: true } }); // calcula o total de posts que foi publicado
+  const totalPages = Math.ceil(totalPosts / pageSize); //calcula o total de páginas
+
+  res.json({
+    posts,
+    pagination: {
+      page, // qual página estamos
+      pageSize, // quantidade de posts por página
+      totalPages, // total de páginas
+      totalPosts, // total de posts
+    },
+  });
 });
 
 // GET /api/posts/search
@@ -60,7 +91,7 @@ router.get('/search', async (req, res) => {
 
 // GET /api/posts
 router.post('/', async (req, res) => {
-  const { title, slug, content, published, authorId } = req.body;
+  const { title, slug, content, published, authorId, tags } = req.body;
 
   const newPost = await prisma.post.create({
     data: {
@@ -69,6 +100,9 @@ router.post('/', async (req, res) => {
       content,
       published,
       authorId,
+      tags: {
+        connect: tags,
+      },
     },
   });
   res.status(201).json(newPost);
@@ -84,6 +118,7 @@ router.get('/:id', async (req, res) => {
     },
     include: {
       author: true,
+      tags: true,
     },
   });
   res.json(post);
@@ -92,14 +127,18 @@ router.get('/:id', async (req, res) => {
 // PUT /api/posts/:id
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const { title, slug, content, published } = req.body;
+  /* const { title, slug, content, published } = req.body; */
 
   const updatedPost = await prisma.post.update({
     data: {
-      title,
+      ...req.body,
+      /*       title,
       slug,
       content,
-      published,
+      published, */
+      tags: {
+        set: req.body.tags,
+      },
     },
     where: {
       id: +id,

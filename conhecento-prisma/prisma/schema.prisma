@@ -24,6 +24,7 @@ model Post {
   updated_at DateTime @updatedAt
   authorId   Int? // Coluna que indica a chave estrangeira
   author     User?    @relation(fields: [authorId], references: [id]) // Campos virtuais para o relacionamento de authorId ao id da tabela Post
+  tags       Tag[]    @relation("PostTags")
 }
 
 // Tabela User
@@ -32,4 +33,10 @@ model User {
   email String @unique @db.VarChar(255)
   name  String @db.VarChar(255)
   posts Post[] // Array de posts
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(255)
+  posts Post[] @relation("PostTags")
 }
