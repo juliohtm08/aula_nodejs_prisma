@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Campaign" ALTER COLUMN "name" SET DATA TYPE VARCHAR(255);
