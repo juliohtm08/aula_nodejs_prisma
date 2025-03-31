@@ -22,7 +22,6 @@ export class GroupsController {
   create: Handler = async (req, res, next) => {
     try {
       const body = CreateGroupRequestSchema.parse(req.body);
-
       const newGroup = await prisma.group.create({ data: body });
 
       res.status(201).json({ newGroup });
@@ -74,7 +73,6 @@ export class GroupsController {
   delete: Handler = async (req, res, next) => {
     try {
       const id = +req.params.id;
-
       const groupExists = await prisma.group.findUnique({
         where: { id: id },
       });
