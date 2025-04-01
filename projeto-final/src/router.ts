@@ -3,14 +3,16 @@ import { HttpError } from './errors/HttpError';
 import { LeadsController } from './controllers/LeadsController';
 import { GroupsController } from './controllers/GroupsController';
 import { CampaignController } from './controllers/CampaignController';
+import { CampaignLeadsController } from './controllers/CampaignLeadsController';
 
 const router = Router();
 
 const leadsController = new LeadsController();
 const groupsController = new GroupsController();
 const campaignsController = new CampaignController();
+const campaignLeadsController = new CampaignLeadsController();
 
-// rota para os leads
+// rota para os líderes
 router.get('/leads', leadsController.index);
 router.post('/leads', leadsController.create);
 router.get('/leads/:id', leadsController.show);
@@ -30,6 +32,18 @@ router.post('/campaigns', campaignsController.create);
 router.get('/campaigns/:id', campaignsController.show);
 router.put('/campaigns/:id', campaignsController.update);
 router.delete('/campaigns/:id', campaignsController.delete);
+
+// rota para os líderes da campanha
+router.get('/campaign/:campaignId/leads', campaignLeadsController.getLeads);
+router.post('/campaign/:campaignId/leads', campaignLeadsController.addLead);
+router.put(
+  '/campaign/:campaignId/leads/:leadId',
+  campaignLeadsController.updateLeadStatus
+);
+router.delete(
+  '/campaign/:campaignId/leads/:leadId',
+  campaignLeadsController.removeLead
+);
 
 // rota de teste
 router.get('/status', async (req, res, next) => {
