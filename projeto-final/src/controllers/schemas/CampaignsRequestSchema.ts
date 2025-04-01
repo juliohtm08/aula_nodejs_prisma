@@ -4,20 +4,14 @@ import { z } from 'zod';
 export const CreateCampaignRequestSchema = z.object({
   name: z.string(),
   description: z.string(),
-  startDate: z.string().transform((date) => new Date(date)),
-  endDate: z.string().transform((date) => new Date(date)),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().optional(),
 });
 
 // esquema para atualizar uma campanha
 export const UpdateCampaignSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
-  startDate: z
-    .string()
-    .transform((date) => new Date(date))
-    .optional(),
-  endDate: z
-    .string()
-    .transform((date) => new Date(date))
-    .optional(),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
 });

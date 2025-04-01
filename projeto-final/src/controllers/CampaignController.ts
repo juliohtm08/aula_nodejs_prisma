@@ -3,7 +3,7 @@ import { prisma } from '../database';
 import {
   CreateCampaignRequestSchema,
   UpdateCampaignSchema,
-} from './schemas/CampaignRequestSchema';
+} from './schemas/CampaignsRequestSchema';
 import { HttpError } from '../errors/HttpError';
 
 export class CampaignController {
@@ -24,11 +24,7 @@ export class CampaignController {
       const body = CreateCampaignRequestSchema.parse(req.body);
 
       const newCampaign = await prisma.campaign.create({
-        data: {
-          ...body,
-          startDate: new Date(body.startDate),
-          endDate: new Date(body.endDate),
-        },
+        data: body,
       });
 
       res.status(201).json({ newCampaign });
@@ -41,6 +37,7 @@ export class CampaignController {
   show: Handler = async (req, res, next) => {
     try {
       const id = +req.params.id;
+
       const campaignExists = await prisma.campaign.findUnique({
         where: { id: id },
       });
@@ -49,7 +46,13 @@ export class CampaignController {
 
       const campaign = await prisma.campaign.findUnique({
         where: { id: id },
-        include: { leads: true },
+        include: {
+          leads: {
+            include: {
+              lead: true,
+            },
+          },
+        },
       });
 
       res.json({ campaign });
@@ -87,6 +90,7 @@ export class CampaignController {
   delete: Handler = async (req, res, next) => {
     try {
       const id = +req.params.id;
+
       const campaignExists = await prisma.campaign.findUnique({
         where: { id: id },
       });
