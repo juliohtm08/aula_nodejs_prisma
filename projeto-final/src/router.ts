@@ -4,6 +4,7 @@ import { LeadsController } from './controllers/LeadsController';
 import { GroupsController } from './controllers/GroupsController';
 import { CampaignController } from './controllers/CampaignController';
 import { CampaignLeadsController } from './controllers/CampaignLeadsController';
+import { GroupLeadsController } from './controllers/GroupLeadsController';
 
 const router = Router();
 
@@ -11,6 +12,7 @@ const leadsController = new LeadsController();
 const groupsController = new GroupsController();
 const campaignsController = new CampaignController();
 const campaignLeadsController = new CampaignLeadsController();
+const groupLeadsController = new GroupLeadsController();
 
 // rota para os líderes
 router.get('/leads', leadsController.index);
@@ -44,6 +46,11 @@ router.delete(
   '/campaign/:campaignId/leads/:leadId',
   campaignLeadsController.removeLead
 );
+
+// rota para os líderes dos grupos
+router.get('/group/:groupId/leads', groupLeadsController.getLeads);
+router.post('/group/:groupId/leads', groupLeadsController.addLead);
+router.delete('/group/:groupId/leads/:leadId', groupLeadsController.removeLead);
 
 // rota de teste
 router.get('/status', async (req, res, next) => {
