@@ -1,11 +1,19 @@
-import { Prisma } from '@prisma/client';
 import { Handler } from 'express';
 import { AddLeadGroupRequestSchema } from './schemas/GroupsRequestSchema';
-import { prisma } from '../database';
-import { HttpError } from '../errors/HttpError';
 import { GetLeadsRequestSchema } from './schemas/LeadsRequestSchema';
+import { GroupsRepository } from '../repositories/GroupsRepository';
+import {
+  LeadsRepository,
+  LeadWhereParams,
+} from '../repositories/LeadsRepository';
 
 export class GroupLeadsController {
+  constructor(
+    private readonly groupsRepository: GroupsRepository,
+    private readonly leadsRepository: LeadsRepository
+  ) {}
+
+  // retornar todos líderes de um grupo
   getLeads: Handler = async (req, res, next) => {
     try {
       const groupId = Number(req.params.groupId);
@@ -19,37 +27,32 @@ export class GroupLeadsController {
         order = 'asc',
       } = query;
 
-      const pageNumber = Number(page);
-      const pageSizeNumber = Number(pageSize);
+      const limit = Number(pageSize);
+      const offset = (Number(page) - 1) * limit;
 
-      const where: Prisma.LeadWhereInput = {
-        groups: {
-          some: { id: groupId },
-        },
-      };
+      const where: LeadWhereParams = { groupId };
 
-      if (name) where.name = { contains: name, mode: 'insensitive' };
+      if (name) where.name = { like: name, mode: 'insensitive' };
       if (status) where.status = status;
 
-      const leads = await prisma.lead.findMany({
+      const leads = await this.leadsRepository.find({
         where,
-        orderBy: { [sortBy]: order },
-        skip: (pageNumber - 1) * pageSizeNumber,
-        take: pageSizeNumber,
-        include: {
-          groups: true,
-        },
+        sortBy,
+        order,
+        limit: limit,
+        offset: offset,
+        include: { groups: true },
       });
 
-      const total = await prisma.lead.count({ where });
+      const total = await this.leadsRepository.count(where);
 
       res.json({
         leads,
         meta: {
-          page: pageNumber,
-          pageSize: pageSize,
+          page: Number(page),
+          pageSize: limit,
           total,
-          totalPages: Math.ceil(total / pageSizeNumber),
+          totalPages: Math.ceil(total / limit),
         },
       });
     } catch (error) {
@@ -57,35 +60,13 @@ export class GroupLeadsController {
     }
   };
 
+  // adicionar um líder a um grupo
   addLead: Handler = async (req, res, next) => {
     try {
       const groupId = Number(req.params.groupId);
       const { leadId } = AddLeadGroupRequestSchema.parse(req.body);
 
-      const existingEntry = await prisma.lead.findFirst({
-        where: {
-          id: leadId,
-          groups: {
-            some: {
-              id: groupId,
-            },
-          },
-        },
-      });
-
-      if (existingEntry) throw new HttpError(400, 'Lead já vinculado');
-
-      const updatedGroup = await prisma.group.update({
-        where: { id: groupId },
-        data: {
-          leads: {
-            connect: { id: leadId },
-          },
-        },
-        include: {
-          leads: true,
-        },
-      });
+      const updatedGroup = await this.groupsRepository.addLead(groupId, leadId);
 
       res.status(201).json({ updatedGroup });
     } catch (error) {
@@ -93,22 +74,16 @@ export class GroupLeadsController {
     }
   };
 
+  // remover um líder de um grupo
   removeLead: Handler = async (req, res, next) => {
     try {
       const leadId = Number(req.params.leadId);
       const groupId = Number(req.params.groupId);
 
-      const updatedGroup = await prisma.group.update({
-        where: { id: groupId },
-        data: {
-          leads: {
-            disconnect: { id: leadId },
-          },
-        },
-        include: {
-          leads: true,
-        },
-      });
+      const updatedGroup = await this.groupsRepository.removeLead(
+        groupId,
+        leadId
+      );
 
       res.status(200).json({ updatedGroup });
     } catch (error) {

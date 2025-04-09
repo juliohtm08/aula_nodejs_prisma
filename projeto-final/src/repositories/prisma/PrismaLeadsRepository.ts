@@ -12,21 +12,25 @@ export class PrismaLeadsRepository implements LeadsRepository {
   async find(params: FindLeadParams): Promise<Lead[]> {
     return prisma.lead.findMany({
       where: {
-        // Filtro por nome com opções de correspondência parcial, exata e sensibilidade
         name: {
           contains: params.where?.name?.like,
           equals: params.where?.name?.equals,
           mode: params.where?.name?.mode,
         },
-        // Filtro por status do lead
         status: params.where?.status,
+        groups: {
+          some: {
+            id: params.where?.groupId,
+          },
+        },
       },
-      // Ordenação por campo (name, status, createdAt) e ordem (asc, desc)
       orderBy: { [params.sortBy ?? 'name']: params.order },
-      // Paginação: pular resultados
       skip: params.offset,
-      // Limite de resultados retornados
       take: params.limit,
+      include: {
+        groups: params.include?.groups,
+        campaigns: params.include?.campaigns,
+      },
     });
   }
 
@@ -51,6 +55,11 @@ export class PrismaLeadsRepository implements LeadsRepository {
           mode: where?.name?.mode,
         },
         status: where?.status,
+        groups: {
+          some: {
+            id: where?.groupId,
+          },
+        },
       },
     });
   }

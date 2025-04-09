@@ -63,7 +63,7 @@ export class GroupsController {
   // deletar um group
   delete: Handler = async (req, res, next) => {
     try {
-      const id = +req.params.id;
+      const id = Number(req.params.id);
 
       const deletedGroup = await this.groupsRepository.deleteById(id);
       if (!deletedGroup) throw new HttpError(404, 'group not found');

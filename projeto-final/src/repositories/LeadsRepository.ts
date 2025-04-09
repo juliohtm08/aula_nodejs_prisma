@@ -18,6 +18,7 @@ export interface LeadWhereParams {
     mode?: 'default' | 'insensitive'; // Sensibilidade à caixa (case-sensitive/insensitive)
   };
   status?: LeadStatus; // Filtra pelo status do lead
+  groupId?: number;
 }
 
 // Define os parâmetros aceitos para listagem de leads, incluindo paginação e ordenação
@@ -27,6 +28,10 @@ export interface FindLeadParams {
   order?: 'asc' | 'desc'; // Ordem crescente ou decrescente
   limit?: number; // Quantidade de registros por página
   offset?: number; // Quantidade de registros a pular (para paginação)
+  include?: {
+    groups?: boolean;
+    campaigns?: boolean;
+  };
 }
 
 // Define os atributos necessários para criar um lead
