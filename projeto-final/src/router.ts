@@ -1,18 +1,13 @@
 import { Router } from 'express';
-import { HttpError } from './errors/HttpError';
-import { LeadsController } from './controllers/LeadsController';
-import { GroupsController } from './controllers/GroupsController';
-import { CampaignController } from './controllers/CampaignController';
-import { CampaignLeadsController } from './controllers/CampaignLeadsController';
-import { GroupLeadsController } from './controllers/GroupLeadsController';
+import {
+  campaignLeadsController,
+  campaignsController,
+  groupLeadsController,
+  groupsController,
+  leadsController,
+} from './container';
 
 const router = Router();
-
-const leadsController = new LeadsController();
-const groupsController = new GroupsController();
-const campaignsController = new CampaignController();
-const campaignLeadsController = new CampaignLeadsController();
-const groupLeadsController = new GroupLeadsController();
 
 // rota para os líderes
 router.get('/leads', leadsController.index);
