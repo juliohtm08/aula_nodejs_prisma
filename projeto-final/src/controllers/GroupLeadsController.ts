@@ -2,6 +2,7 @@ import { Handler } from 'express';
 import { AddLeadGroupRequestSchema } from './schemas/GroupsRequestSchema';
 import { GetLeadsRequestSchema } from './schemas/LeadsRequestSchema';
 import { GroupsLeadsService } from '../services/GroupLeadsService';
+import { LeadCampaignStatus } from '../repositories/LeadsRepository';
 
 export class GroupLeadsController {
   constructor(private readonly groupLeadsService: GroupsLeadsService) {}

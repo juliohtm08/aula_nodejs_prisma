@@ -1,6 +1,7 @@
 import { HttpError } from '../errors/HttpError';
 import {
   CreateLeadAttributes,
+  LeadCampaignStatus,
   LeadsRepository,
   LeadStatus,
   LeadWhereParams,
