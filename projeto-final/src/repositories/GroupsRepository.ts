@@ -1,8 +1,8 @@
 import { Group } from '@prisma/client';
 
 export interface CreateGroupsAttributes {
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
 }
 
 export interface GroupsRepository {
