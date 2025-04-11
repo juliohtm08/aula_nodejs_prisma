@@ -1,9 +1,9 @@
 import { Campaign, LeadCampaignStatus } from '@prisma/client';
 
 export interface CreateCampaignAttributes {
-  name: string;
-  description: string;
-  startDate: Date;
+  name?: string;
+  description?: string;
+  startDate?: Date;
   endDate?: Date;
 }
 
