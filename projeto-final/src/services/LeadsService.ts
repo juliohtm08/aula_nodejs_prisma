@@ -6,7 +6,7 @@ import {
   LeadWhereParams,
 } from '../repositories/LeadsRepository';
 
-interface GetLeadsWithPaginationParams {
+export interface GetLeadsWithPaginationParams {
   page?: number;
   pageSize?: number;
   name?: string;
