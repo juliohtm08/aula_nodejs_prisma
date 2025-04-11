@@ -1,4 +1,3 @@
-import { HttpError } from './errors/HttpError';
 import { LeadsController } from './controllers/LeadsController';
 import { GroupsController } from './controllers/GroupsController';
 import { CampaignController } from './controllers/CampaignController';
@@ -19,4 +18,7 @@ export const groupLeadsController = new GroupLeadsController(
   leadsRepository
 );
 export const campaignsController = new CampaignController(campaignsRepository);
-export const campaignLeadsController = new CampaignLeadsController();
+export const campaignLeadsController = new CampaignLeadsController(
+  campaignsRepository,
+  leadsRepository
+);

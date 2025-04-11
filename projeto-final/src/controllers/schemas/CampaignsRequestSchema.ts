@@ -19,7 +19,7 @@ export const UpdateCampaignSchema = z.object({
 const LeadCampaignStatusSchema = z.enum([
   'New',
   'Engaged',
-  'FolloUp_Scheduled',
+  'FollowUp_Scheduled',
   'Contacted',
   'Qualified',
   'Converted',

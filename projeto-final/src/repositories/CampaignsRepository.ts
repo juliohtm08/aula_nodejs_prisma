@@ -1,4 +1,4 @@
-import { Campaign } from '@prisma/client';
+import { Campaign, LeadCampaignStatus } from '@prisma/client';
 
 export interface CreateCampaignAttributes {
   name: string;
@@ -7,13 +7,22 @@ export interface CreateCampaignAttributes {
   endDate?: Date;
 }
 
+export interface AddLeadCampaignAttributes {
+  campaignId: number;
+  leadId: number;
+  status: LeadCampaignStatus;
+}
+
 export interface CampaignsRepository {
   find: () => Promise<Campaign[]>;
   findById: (id: number) => Promise<Campaign | null>;
-  create: (attirbutes: CreateCampaignAttributes) => Promise<Campaign>;
+  create: (attributes: CreateCampaignAttributes) => Promise<Campaign>;
   updateById: (
     id: number,
-    attirbutes: Partial<CreateCampaignAttributes>
+    attributes: Partial<CreateCampaignAttributes>
   ) => Promise<Campaign | null>;
   deleteById: (id: number) => Promise<Campaign | null>;
+  addLead: (attributes: AddLeadCampaignAttributes) => Promise<void>;
+  updateLeadStatus: (attributes: AddLeadCampaignAttributes) => Promise<void>;
+  removeLead: (campaignId: number, leadId: number) => Promise<void>;
 }

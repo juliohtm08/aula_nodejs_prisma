@@ -10,6 +10,18 @@ export type LeadStatus =
   | 'Disqualified'
   | 'Archived';
 
+export type LeadCampaignStatus =
+  | 'New'
+  | 'Engaged'
+  | 'FollowUp_Scheduled'
+  | 'Contacted'
+  | 'Qualified'
+  | 'Converted'
+  | 'Unresponsive'
+  | 'Disqualified'
+  | 'Re_Engaged'
+  | 'Opted_Out';
+
 // Define os parâmetros que podem ser usados para filtrar buscas de leads
 export interface LeadWhereParams {
   name?: {
@@ -18,7 +30,9 @@ export interface LeadWhereParams {
     mode?: 'default' | 'insensitive'; // Sensibilidade à caixa (case-sensitive/insensitive)
   };
   status?: LeadStatus; // Filtra pelo status do lead
+  campaignStatus?: LeadCampaignStatus;
   groupId?: number;
+  campaignId?: number;
 }
 
 // Define os parâmetros aceitos para listagem de leads, incluindo paginação e ordenação

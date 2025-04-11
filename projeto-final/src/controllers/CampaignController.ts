@@ -24,7 +24,6 @@ export class CampaignController {
   create: Handler = async (req, res, next) => {
     try {
       const body = CreateCampaignRequestSchema.parse(req.body);
-
       const newCampaign = await this.campaignsRepository.create(body);
 
       res.status(201).json({ newCampaign });
@@ -39,7 +38,6 @@ export class CampaignController {
       const id = Number(req.params.id);
 
       const campaign = await this.campaignsRepository.findById(id);
-
       if (!campaign) throw new HttpError(404, 'Campaign not found');
 
       res.json({ campaign });
@@ -70,7 +68,6 @@ export class CampaignController {
       const id = Number(req.params.id);
 
       const deletedCampaign = await this.campaignsRepository.deleteById(id);
-
       if (!deletedCampaign) throw new HttpError(404, 'Campaign not found');
 
       res.json({ deletedCampaign });
